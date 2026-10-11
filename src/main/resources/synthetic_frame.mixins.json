@@ -3,7 +3,9 @@
   "minVersion": "0.8",
   "package": "net.reversteam.synthetic_frame.mixin",
   "refmap": "synthetic_frame.refmap.json",
-  "mixins": [],
+  "mixins": [
+    "FoodDataAccessor"
+  ],
   "client": [],
   "server": [],
   "injectors": {
