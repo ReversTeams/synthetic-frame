@@ -92,7 +92,9 @@ public class EnergyBarOverlay {
     }
 
     private static String formatEnergy(long energy) {
-        if (energy >= 1_000_000) {
+        if (energy >= 1_000_000_000) {
+            return (energy / 1_000_000_000) + "G";
+        }else if (energy >= 1_000_000) {
             return (energy / 1_000_000) + "M";
         } else if (energy >= 1_000) {
             return (energy / 1_000) + "k";
