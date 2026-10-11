@@ -1,35 +1,18 @@
 package net.reversteam.synthetic_frame.common.util;
 
+import net.reversteam.synthetic_frame.common.config.SFConfig;
+
 public class SyntheticFrameMath {
 
-    // TODO load from config
-
-    // Base values
-    public static final boolean BASE_SYNTHETIC = false;
-    public static final double BASE_CAPACITY = 100_000.0;
-    public static final double BASE_OVERCHARGE_TIME = 60; // minutes
-    public static final double BASE_ACTIVE_DRAIN_PER_EXHAUSTION = 100.0;
-    public static final double BASE_PASSIVE_DRAIN_PER_TICK = 2.0;
-
-    // Exponents for sub-linear scaling
-    public static final double ACTIVE_DRAIN_EXPONENT = 0.5; // Square root
-    public static final double PASSIVE_DRAIN_EXPONENT = 0.25; // Fourth root
-
-    // Behaviour values
-    public static final long HEAL_COST = 20;
-    public static final float HEAL_AMOUNT = 0.1f;
-    public static final float LOW_CHARGE_HEAL_MULTIPLIER = 0.2f;
-    public static final float LOW_CHARGE_THRESHOLD = 0.10f; // <10%
-
     static double calculateCapacityRatio(long maxEnergy) {
-        return Math.max(1.0, (double) maxEnergy / BASE_CAPACITY);
+        return Math.max(1.0, (double) maxEnergy / SFConfig.BASE_CAPACITY.get());
     }
 
     // Passive drain
     public static long calculatePassiveDrain(long maxEnergy) {
         double capacityRatio = calculateCapacityRatio(maxEnergy);
-        double passiveMultiplier = Math.pow(capacityRatio, PASSIVE_DRAIN_EXPONENT);
-        return (long) Math.max(1, BASE_PASSIVE_DRAIN_PER_TICK * passiveMultiplier);
+        double passiveMultiplier = Math.pow(capacityRatio, SFConfig.PASSIVE_DRAIN_EXPONENT.get());
+        return (long) Math.max(1, SFConfig.BASE_PASSIVE_DRAIN_PER_TICK.get() * passiveMultiplier);
         // Note: Returns FE per tick. Multiply by 20 for FE per second.
     }
 
@@ -38,8 +21,8 @@ public class SyntheticFrameMath {
         if (exhaustion <= 0.0f)
             return 0;
         double capacityRatio = calculateCapacityRatio(maxEnergy);
-        double activeMultiplier = Math.pow(capacityRatio, ACTIVE_DRAIN_EXPONENT);
-        return (long) (exhaustion * BASE_ACTIVE_DRAIN_PER_EXHAUSTION * activeMultiplier);
+        double activeMultiplier = Math.pow(capacityRatio, SFConfig.ACTIVE_DRAIN_EXPONENT.get());
+        return (long) (exhaustion * SFConfig.BASE_ACTIVE_DRAIN_PER_EXHAUSTION.get() * activeMultiplier);
     }
 
     // Time you can last with a full charge (minutes)

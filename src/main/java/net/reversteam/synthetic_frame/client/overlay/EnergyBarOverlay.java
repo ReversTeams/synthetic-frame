@@ -11,6 +11,8 @@ import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.reversteam.synthetic_frame.SyntheticFrame;
+import net.reversteam.synthetic_frame.client.config.SFClientConfig;
+import net.reversteam.synthetic_frame.client.config.SFClientConfig.TextDisplayMode;
 import net.reversteam.synthetic_frame.common.capabilities.FrameData;
 import net.reversteam.synthetic_frame.common.capabilities.FrameDataProvider;
 
@@ -70,15 +72,23 @@ public class EnergyBarOverlay {
             guiGraphics.blit(POWER_BAR_TEXTURE, startX, y, uOffset, vOffset, fillWidth, BAR_HEIGHT, BAR_WIDTH, BAR_HEIGHT * 2);
         }
 
-        // 3. Draw formatted energy text on top, centered
-        String text = formatEnergy(currentEnergy) + " / " + formatEnergy(maxEnergy) + " FE";
-        Font font = Minecraft.getInstance().font;
-        int textWidth = font.width(text);
-        int textX = x + (BAR_WIDTH - textWidth) / 2;
-        int textY = y + 1; // Centered vertically within the 9px height
-        
-        // Draw string with shadow (true) for readability against the bar
-        guiGraphics.drawString(font, text, textX, textY, 0xFFFFFF, true);
+        // 3. Draw formatted energy text based on client config
+        TextDisplayMode mode = SFClientConfig.ENERGY_BAR_TEXT_MODE.get();
+        if (mode != TextDisplayMode.NONE) {
+            String text;
+            if (mode == TextDisplayMode.VALUE_ONLY) {
+                text = formatEnergy(currentEnergy) + " FE";
+            } else {
+                text = formatEnergy(currentEnergy) + " / " + formatEnergy(maxEnergy) + " FE";
+            }
+            
+            Font font = Minecraft.getInstance().font;
+            int textWidth = font.width(text);
+            int textX = x + (BAR_WIDTH - textWidth) / 2;
+            int textY = y + 1; // Centered vertically within the 9px height
+            
+            guiGraphics.drawString(font, text, textX, textY, 0xFFFFFF, true);
+        }
     }
 
     private static String formatEnergy(long energy) {

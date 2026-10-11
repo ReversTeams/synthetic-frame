@@ -5,6 +5,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.capabilities.AutoRegisterCapability;
 import net.minecraftforge.energy.IEnergyStorage;
+import net.reversteam.synthetic_frame.common.config.SFConfig;
 import net.reversteam.synthetic_frame.common.network.FrameDataSyncPacket;
 import net.reversteam.synthetic_frame.common.network.SyntheticFrameNetwork;
 import net.reversteam.synthetic_frame.common.util.SyntheticFrameMath;
@@ -12,8 +13,8 @@ import net.reversteam.synthetic_frame.common.util.SyntheticFrameMath;
 @AutoRegisterCapability
 public class FrameData implements IEnergyStorage {
     private boolean isSynthetic = false;
-    private long energy = SyntheticFrameMath.calculateEnergyForMinutes((long) SyntheticFrameMath.BASE_CAPACITY, SyntheticFrameMath.BASE_OVERCHARGE_TIME);
-    private long maxEnergy = (long) SyntheticFrameMath.BASE_CAPACITY;
+    private long energy = SyntheticFrameMath.calculateEnergyForMinutes(SFConfig.BASE_CAPACITY.get().longValue(), SFConfig.BASE_OVERCHARGE_TIME.get());
+    private long maxEnergy = SFConfig.BASE_CAPACITY.get().longValue();
 
     private boolean lastSyncedSynthetic = false;
     private long lastSyncedEnergy = -1;

@@ -8,6 +8,7 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.reversteam.synthetic_frame.common.capabilities.FrameData;
 import net.reversteam.synthetic_frame.common.capabilities.FrameDataProvider;
+import net.reversteam.synthetic_frame.common.config.SFConfig;
 import net.reversteam.synthetic_frame.common.util.EnergyChargeHelper;
 import net.reversteam.synthetic_frame.common.util.SyntheticFrameMath;
 import net.reversteam.synthetic_frame.mixin.FoodDataAccessor;
@@ -54,7 +55,7 @@ public class PlayerFrameHandler {
             // Starving: 0 food causes native starvation damage
             foodData.setFoodLevel(0);
             foodData.setSaturation(0.0f);
-        } else if (energyPercent <= SyntheticFrameMath.LOW_CHARGE_THRESHOLD) {
+        } else if (energyPercent <= SFConfig.LOW_CHARGE_THRESHOLD.get()) {
             // Low Hunger: <= 6 food prevents sprinting and natural regeneration
             foodData.setFoodLevel(6);
             foodData.setSaturation(0.0f);
@@ -66,32 +67,32 @@ public class PlayerFrameHandler {
 
         // Regenerate Health using energy
         if (player.getHealth() < player.getMaxHealth() && currentEnergy > 0) {
-            boolean notLowCharge = energyPercent > SyntheticFrameMath.LOW_CHARGE_THRESHOLD;
+            boolean notLowCharge = energyPercent > SFConfig.LOW_CHARGE_THRESHOLD.get();
 
-            player.heal(SyntheticFrameMath.HEAL_AMOUNT * (notLowCharge ? 1f : SyntheticFrameMath.LOW_CHARGE_HEAL_MULTIPLIER));
-            data.consumeEnergy(SyntheticFrameMath.HEAL_COST); // Costs FE to heal
+            player.heal((float)(SFConfig.HEAL_AMOUNT.get() * (notLowCharge ? 1.0 : SFConfig.LOW_CHARGE_HEAL_MULTIPLIER.get())));
+            data.consumeEnergy(SFConfig.HEAL_COST.get());
         }
 
         // Scale Max Health based on Max Energy Capacity
         // Base 20 HP + 1 HP per 1000 FE capacity above the base value
-        float targetMaxHealth = 20.0f + Math.max(0, (float)((maxEnergy / 1000.0f) - SyntheticFrameMath.BASE_CAPACITY));
+        float targetMaxHealth = 20.0f + Math.max(0, (float)((maxEnergy / 1000.0f) - SFConfig.BASE_CAPACITY.get()));
         AttributeInstance maxHealthAttr = player.getAttribute(Attributes.MAX_HEALTH);
 
         if (maxHealthAttr != null && Math.abs(maxHealthAttr.getBaseValue() - targetMaxHealth) > 0.1f) {
             double oldMax = maxHealthAttr.getBaseValue();
             maxHealthAttr.setBaseValue(targetMaxHealth);
-            // Optionally scale current health proportionally to prevent sudden "healing" or
-            // "damage" on capacity change
+            // Optionally scale current health proportionally to prevent sudden "healing" or "damage" on capacity change
             if (oldMax > 0) {
                 double healthRatio = player.getHealth() / oldMax;
-                player.setHealth((float) Math.min(player.getHealth() + (targetMaxHealth - oldMax) * healthRatio,
-                        targetMaxHealth));
+                player.setHealth((float) Math.min(
+                    player.getHealth() + (targetMaxHealth - oldMax) * healthRatio, 
+                    targetMaxHealth
+                ));
             }
         }
 
         // Trickle-charge items in inventory and curios
-        // 1% of max energy per second = (maxEnergy * 0.01) / 20 ticks per item
-        int chargePerItemPerTick = Math.max(1, (int) Math.ceil(maxEnergy * 0.01 / 20.0));
+        int chargePerItemPerTick = Math.max(1, (int) Math.ceil(maxEnergy * SFConfig.ITEM_CHARGE_RATE.get() / 20.0));
         EnergyChargeHelper.chargePlayerItems(player, data, chargePerItemPerTick);
 
         data.syncToClient(player);

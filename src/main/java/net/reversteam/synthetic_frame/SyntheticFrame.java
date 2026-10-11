@@ -12,10 +12,14 @@ import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.reversteam.synthetic_frame.client.config.SFClientConfig;
 import net.reversteam.synthetic_frame.common.capabilities.FrameData;
 import net.reversteam.synthetic_frame.common.capabilities.FrameDataProvider;
+import net.reversteam.synthetic_frame.common.config.SFConfig;
 import net.reversteam.synthetic_frame.common.handler.PlayerFrameHandler;
 import net.reversteam.synthetic_frame.common.init.ModBlockEntities;
 import net.reversteam.synthetic_frame.common.init.ModBlocks;
@@ -30,6 +34,9 @@ public class SyntheticFrame {
 
     public SyntheticFrame(FMLJavaModLoadingContext context) {
         IEventBus modEventBus = context.getModEventBus();
+
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, SFConfig.COMMON_SPEC, "synthetic_frame-common.toml");
+    ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, SFClientConfig.CLIENT_SPEC, "synthetic_frame-client.toml");
 
         ModBlocks.register(modEventBus);
         ModItems.register(modEventBus);
