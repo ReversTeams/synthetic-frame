@@ -59,7 +59,7 @@ public class EnergyBarOverlay {
         guiGraphics.blit(POWER_BAR_TEXTURE, x, y, 0, 0, BAR_WIDTH, BAR_HEIGHT, BAR_WIDTH, BAR_HEIGHT * 2);
 
         // 2. Draw the lit bar, filling from the RIGHT edge towards the LEFT (center)
-        int fillWidth = (int) (BAR_WIDTH * energyPercent);
+        int fillWidth = (int) Math.min(BAR_WIDTH * energyPercent, BAR_WIDTH);
         if (fillWidth > 0) {
             // Start drawing from the right side of the filled portion
             int startX = x + BAR_WIDTH - fillWidth;
