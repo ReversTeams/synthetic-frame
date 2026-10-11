@@ -77,9 +77,9 @@ public class EnergyBarOverlay {
         if (mode != TextDisplayMode.NONE) {
             String text;
             if (mode == TextDisplayMode.VALUE_ONLY) {
-                text = formatEnergy(currentEnergy) + " FE";
+                text = formatEnergy(currentEnergy) + " RF";
             } else {
-                text = formatEnergy(currentEnergy) + " / " + formatEnergy(maxEnergy) + " FE";
+                text = formatEnergy(currentEnergy) + " / " + formatEnergy(maxEnergy) + " RF";
             }
             
             Font font = Minecraft.getInstance().font;
